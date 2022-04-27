@@ -12,6 +12,8 @@ import {
 import styled from "styled-components/native";
 import { DARKGREY_COLOR } from "../color";
 import { Ionicons } from "@expo/vector-icons";
+import { signUpApi } from "./../utils/api";
+import { useNavigation } from "@react-navigation/native";
 
 const WholeContainer = styled.View`
   flex: 1;
@@ -71,6 +73,8 @@ const SignUp = ({ navigation: { navigate } }) => {
   const [passwordValid, setPasswordValid] = useState(false);
   const [nicknameValid, setNicknameValid] = useState(false);
 
+  const navigation = useNavigation();
+
   const onChangeEmail = (event) => {
     setEmailValid(false);
     setEMailText(event);
@@ -118,7 +122,28 @@ const SignUp = ({ navigation: { navigate } }) => {
   const onPressSignUp = () => {
     if (emailValid && passwordValid && nicknameValid) {
       //TODO : 회원가입 API 전송, 로그인 화면으로 화면 전환
-      alert("valid OK 회원가입 성공");
+      const tempLog = signUpApi.signUp({
+        userId: eMailText,
+        pw: passText,
+        name: nicknameText,
+      });
+      // alert(
+      //   `valid OK 회원가입 성공\nuserid:${eMailText}, pw:${passText}, name:${nicknameText}`
+      // );
+      Alert.alert("회원가입성공 (title)", "회원가입성공 (message)", [
+        {
+          text: "OK",
+          onPress: () => {
+            navigation.navigate("LoginStack", {
+              screen: "Login",
+              // params: { ...fullData, postLike, postLikeCnt, postCommentCnt },
+            });
+          },
+        },
+      ]);
+      console.log("================================================");
+      console.log(tempLog);
+      console.log("================================================");
     } else if (!emailValid) {
       alert("이메일을 확인하세요");
     } else if (!passwordValid) {

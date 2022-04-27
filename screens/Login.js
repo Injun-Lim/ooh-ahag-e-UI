@@ -34,27 +34,24 @@ const Login = ({ navigation: { navigate } }) => {
 
       console.log("[LOG] resApi : " + res);
 
+      console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+      console.log("resApi.data.success : " + resApi.data.success);
+      console.log(`resApi.headers.expires :  + ${resApi.headers.expires}`);
+      console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+
       if (resApi.data.success === true) {
         Alert.alert(
           "success login",
-          "Login 성공! ID : " +
-            resApi.data.content.userId +
-            "PW : " +
-            resApi.data.content.pw
+          "Login 성공! ID : " + text + "PW : " + number
         );
         navigate("Tabs", { screen: "Home" });
       } else {
-        Alert.alert(
-          "wrong id pw",
-          "ID : " +
-            resApi.data.content.userId +
-            "PW : " +
-            resApi.data.content.pw
-        );
+        Alert.alert("wrong id pw", "ID : " + text + "PW : " + number);
       }
 
       setLoading(false);
     } catch (error) {
+      console.log(`ERROR : ${error}`);
       Alert.alert("로그인 정보를 가져올 수 없습니다.");
 
       setLoading(false);
