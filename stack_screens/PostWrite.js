@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import React, { useEffect, useState } from "react";
+import { Text, Alert } from "react-native";
+// import { Picker } from "@react-native-picker/picker";
 import styled from "styled-components/native";
-import { DARKGREY_COLOR } from "../color";
-import { Ionicons } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native-web";
+import { useNavigation } from "@react-navigation/native";
+import { postApi } from "../utils/api";
 
 const WholeContainer = styled.View`
   flex: 1;
@@ -82,8 +81,10 @@ const BoardSelectContainer = styled.View`
 const PostWrite = ({ navigation: { navigate } }) => {
   const [postTitle, setPostTitle] = useState("");
   const [postContents, setPostContents] = useState("");
-  const [boardSelect, setBoardSelect] = useState("");
-  const [boardIndex, setBoardIndex] = useState("");
+  // const [boardSelect, setBoardSelect] = useState("");
+  // const [boardIndex, setBoardIndex] = useState("");
+
+  const navigation = useNavigation();
 
   const onChangePostTitle = (event) => {
     setPostTitle(event);
@@ -92,35 +93,66 @@ const PostWrite = ({ navigation: { navigate } }) => {
     setPostContents(event);
   };
 
-  const onPressWrite = () => {
+  const onPressWrite = async () => {
     if (postTitle && postContents) {
-      //TODO : 글쓰기 API 전송
-      alert(
-        `글 작성 완료\n제목:${postTitle} \n내용:${postContents}\n게시판:${boardSelect}\n게시판인덱스: ${boardIndex}`
-      );
+      const tempLog = await postApi.writePost({
+        title: postTitle,
+        content: postContents,
+      });
+
+      console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+      console.log(JSON.stringify(tempLog));
+      console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+
+      if (tempLog.data.success === true) {
+        Alert.alert(
+          "글 작성 완료",
+          `제목:${postTitle} \n내용:${postContents}`,
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                navigation.navigate("Tabs", {
+                  screen: "Home",
+                  // params: { ...fullData, postLike, postLikeCnt, postCommentCnt },
+                });
+              },
+            },
+          ]
+        );
+      } else {
+        Alert.alert("글쓰기 에러", `제목:${postTitle} \n내용:${postContents}`);
+      }
+      console.log("================================================");
+      console.log(tempLog);
+      console.log("================================================");
+    } else if (!postTitle) {
+      alert("제목을 입력하세요.");
+    } else if (!postContents) {
+      alert("내용을 입력하세요.");
     }
   };
 
   //TODO : 화면 로딩시 권한 있는 게시판 목록 API로 가져오기, 기본값 세팅해주기(boardSelect)
   useEffect(() => {}, []);
 
-  const onChangeBoard = (itemValue, itemIndex) => {
-    setBoardSelect(itemValue);
-    setBoardIndex(itemIndex);
-  };
+  // const onChangeBoard = (itemValue, itemIndex) => {
+  //   setBoardSelect(itemValue);
+  //   setBoardIndex(itemIndex);
+  // };
 
   return (
     <WholeContainer>
       {/* <BtnBoardSelect>
         <TxtBoardSelect>게시판 선택 ▽</TxtBoardSelect>
       </BtnBoardSelect> */}
-      <BoardSelectContainer>
-        <PickerBoard selectedValue={boardSelect} onValueChange={onChangeBoard}>
+      {/* <BoardSelectContainer>
+         <PickerBoard selectedValue={boardSelect} onValueChange={onChangeBoard}>
           <Picker.Item label="1번 게시판" value="1번 게시판" />
           <Picker.Item label="2번 게시판" value="2번 게시판" />
           <Picker.Item label="3번 게시판" value="3번 게시판" />
-        </PickerBoard>
-      </BoardSelectContainer>
+        </PickerBoard> 
+      </BoardSelectContainer>*/}
       <TxtTitle
         placeholder={"글 제목"}
         onChangeText={onChangePostTitle}

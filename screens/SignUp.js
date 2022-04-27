@@ -119,10 +119,10 @@ const SignUp = ({ navigation: { navigate } }) => {
     }
   };
 
-  const onPressSignUp = () => {
+  const onPressSignUp = async () => {
     if (emailValid && passwordValid && nicknameValid) {
       //TODO : 회원가입 API 전송, 로그인 화면으로 화면 전환
-      const tempLog = signUpApi.signUp({
+      const tempLog = await signUpApi.signUp({
         userId: eMailText,
         pw: passText,
         name: nicknameText,

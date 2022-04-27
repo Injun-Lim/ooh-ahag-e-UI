@@ -31,6 +31,19 @@ export const signUpApi = {
     });
   },
 };
+
+export const postApi = {
+  writePost: (params) => {
+    console.log("------------------------------------------------------");
+    console.log(params);
+    console.log("------------------------------------------------------");
+    return AxiosUtil.post(`/api/post?tag=고정값테스트`, {
+      title: params.title,
+      content: params.content,
+    });
+  },
+};
+
 export const boardApi = {
   comment: ({ pageParam, queryKey }) => {
     const [_, id] = queryKey;

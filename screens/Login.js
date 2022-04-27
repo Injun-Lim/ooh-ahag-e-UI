@@ -13,8 +13,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { LoginApiSelector } from "../utils/login/LoginAPI";
 
 const Login = ({ navigation: { navigate } }) => {
-  const [text, setText] = useState("asd");
-  const [number, setNumber] = useState("123");
+  const [text, setText] = useState("test@test.com");
+  const [number, setNumber] = useState("test");
 
   const [isLoading, setLoading] = useState(false);
 
