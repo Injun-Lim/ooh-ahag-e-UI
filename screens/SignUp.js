@@ -33,6 +33,10 @@ const TxtInput = styled.TextInput`
   margin-bottom: 20px;
 `;
 
+const TxtInput70 = styled(TxtInput)`
+  width: 70%;
+`;
+
 const FormArea = styled.View`
   width: 100%;
   flex: 0.5;
@@ -62,12 +66,25 @@ const SignUpBtn = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
 `;
+const BtnText = styled.Text`
+  color: white;
+`;
+
+const EMailValidBtnArea = styled.View`
+  /* align-items: flex-end; */
+  width: 100%;
+  justify-content: space-between;
+  flex-direction: row;
+`;
+const EMailValidBtn = styled(SignUpBtn)`
+  width: 25%;
+`;
 
 const SignUp = ({ navigation: { navigate } }) => {
   const [eMailText, setEMailText] = useState("");
-  const [passText, setPassText] = useState("");
-  const [passValidText, setPassValidText] = useState("");
-  const [nicknameText, setnicknameText] = useState("");
+  const [passText, setPassText] = useState("test");
+  const [passValidText, setPassValidText] = useState("test");
+  const [nicknameText, setnicknameText] = useState("test");
 
   const [emailValid, setEmailValid] = useState(false);
   const [passwordValid, setPasswordValid] = useState(false);
@@ -92,7 +109,7 @@ const SignUp = ({ navigation: { navigate } }) => {
     setnicknameText(event);
   };
 
-  //TODO : API로 통신하여 중복 체크 해야 함, 현재는 스트링 값에 "@" 있는지만 체크함
+  //TODO : API로 통신하여 중복 체크 해야 함, 현재는 스트링 값에 "@" 있는지만 체크함 => API 적용중
   const checkEmailValid = () => {
     if (eMailText.toString().includes("@")) {
       setEmailValid(true);
@@ -153,6 +170,22 @@ const SignUp = ({ navigation: { navigate } }) => {
     }
   };
 
+  const onPressEMailValid = async () => {
+    if (eMailText.toString().includes("@")) {
+      //TODO : response의 success값 확인해서 valid ok해주기
+      // const tempLog = await signUpApi.eMailValidCheck({
+      //   userId: eMailText,
+      // });
+      // console.log(tempLog);
+
+      // if(tempLog.success) {setEmailValid(true);}
+      setEmailValid(true);
+    } else {
+      setEmailValid(false);
+      alert("이메일 형식이 아닙니다.");
+    }
+  };
+
   useEffect(() => {}, []);
 
   return (
@@ -160,17 +193,24 @@ const SignUp = ({ navigation: { navigate } }) => {
       <SocialText>이메일로 회원가입</SocialText>
       <Hr />
       <FormArea>
+        <EMailValidBtnArea>
+          <TxtInput70
+            placeholder={"이메일"}
+            onChangeText={onChangeEmail}
+            value={eMailText}
+            keyboardType={"email-address"}
+            style={{ borderColor: emailValid ? "green" : "red" }}
+            // onEndEditing={checkEmailValid}
+            autoCapitalize={"none"}
+          />
+
+          <EMailValidBtn onPress={onPressEMailValid}>
+            <BtnText>중복체크</BtnText>
+          </EMailValidBtn>
+        </EMailValidBtnArea>
+
         <TxtInput
-          placeholder={"이메일 (현재 '@' 포함되면 valid 통과)"}
-          onChangeText={onChangeEmail}
-          value={eMailText}
-          keyboardType={"email-address"}
-          style={{ borderColor: emailValid ? "green" : "red" }}
-          onEndEditing={checkEmailValid}
-          autoCapitalize={"none"}
-        />
-        <TxtInput
-          placeholder={"비밀번호"}
+          placeholder={"비밀번호 (현재 기본값 test)"}
           onChangeText={onChangePassword}
           value={passText}
           secureTextEntry
@@ -198,7 +238,7 @@ const SignUp = ({ navigation: { navigate } }) => {
       </FormArea>
       <SignUpBtnArea>
         <SignUpBtn onPress={onPressSignUp}>
-          <Text style={styles.buttonTitle}>회원가입 하기</Text>
+          <BtnText>회원가입 하기</BtnText>
         </SignUpBtn>
       </SignUpBtnArea>
     </WholeContainer>
@@ -206,59 +246,3 @@ const SignUp = ({ navigation: { navigate } }) => {
 };
 
 export default SignUp;
-
-const styles = StyleSheet.create({
-  logo: {
-    height: 100,
-    width: 100,
-    padding: "5%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "white",
-    paddingLeft: "10%",
-    paddingRight: "10%",
-    justifyContent: "center",
-  },
-  titleArea: {
-    width: "100%",
-    padding: "5%",
-    alignItems: "center",
-    // backgroundColor: "blue",
-  },
-  title: {
-    fontSize: 20,
-  },
-  formArea: {
-    width: "100%",
-    height: "15%",
-    // backgroundColor: "green",
-    // paddingBottom: "2%",
-  },
-  textForm: {
-    borderWidth: 1,
-    borderColor: "#888",
-    width: "100%",
-    height: "30%",
-    paddingLeft: 5,
-    paddingRight: 5,
-    marginBottom: 10,
-  },
-  buttonArea: {
-    // backgroundColor: "yellow",
-    width: "100%",
-    height: "5%",
-  },
-  button: {
-    backgroundColor: "#46c3ad",
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonTitle: {
-    color: "white",
-  },
-});

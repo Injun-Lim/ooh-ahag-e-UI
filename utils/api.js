@@ -1,4 +1,5 @@
 import AxiosUtil from "./AxiosUtil";
+import { axios } from "axios";
 
 const API_KEY = "4bcbfabbc30b44ceca30afb09d315286";
 const BASE_URL_MOVIE = "https://api.themoviedb.org/3";
@@ -21,26 +22,67 @@ const BASE_URL = "http://13.125.219.60:8080";
 
 export const signUpApi = {
   signUp: (params) => {
-    console.log("------------------------------------------------------");
+    console.log("signUp------------------------------------------------------");
     console.log(params);
-    console.log("------------------------------------------------------");
+    console.log("signUp------------------------------------------------------");
     return AxiosUtil.post("/api/v1/signup", {
       userId: params.userId,
       pw: params.pw,
       name: params.name,
     });
   },
+
+  eMailValidCheck: (params) => {
+    console.log(
+      "eMailValidCheck------------------------------------------------------"
+    );
+    console.log(params);
+    console.log(
+      "eMailValidCheck------------------------------------------------------"
+    );
+    return AxiosUtil.post("/api/v1/signup/userid", {
+      userId: params.userId,
+    });
+  },
 };
 
 export const postApi = {
   writePost: (params) => {
-    console.log("------------------------------------------------------");
+    console.log(
+      "writePost------------------------------------------------------"
+    );
     console.log(params);
-    console.log("------------------------------------------------------");
+    console.log(
+      "writePost------------------------------------------------------"
+    );
     return AxiosUtil.post(`/api/post?tag=고정값테스트`, {
       title: params.title,
       content: params.content,
     });
+  },
+
+  getPostList: () => {
+    // TODO : axios버전으로 변경하기 (get)
+    // return AxiosUtil.get(`/api/post/index`).then((res) => JSON.stringify(res));
+    // return axios
+    //   .get(`${BASE_URL}/api/post/index`)
+    //   .then((res) => JSON.stringify(res));
+    return fetch(`${BASE_URL}/api/post/index`).then((res) => res.json());
+  },
+
+  postLike: (params) => {
+    console.log(
+      "postLike------------------------------------------------------"
+    );
+    console.log(params);
+    console.log(
+      "postLike------------------------------------------------------"
+    );
+    if (params.kind === "like") {
+      return AxiosUtil.get(`/like/${params.id}`);
+    } else if (params.kind === "disLike") {
+      return AxiosUtil.delete(`/like/${params.id}`);
+    }
   },
 };
 

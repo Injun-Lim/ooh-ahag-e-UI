@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Text, Alert } from "react-native";
-// import { Picker } from "@react-native-picker/picker";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { postApi } from "../utils/api";
@@ -66,10 +65,6 @@ const SignUpBtn = styled.TouchableOpacity`
   height: 40px;
   justify-content: center;
   align-items: center;
-`;
-
-const PickerBoard = styled.Picker`
-  border-color: black;
 `;
 
 const BoardSelectContainer = styled.View`
@@ -143,16 +138,6 @@ const PostWrite = ({ navigation: { navigate } }) => {
 
   return (
     <WholeContainer>
-      {/* <BtnBoardSelect>
-        <TxtBoardSelect>게시판 선택 ▽</TxtBoardSelect>
-      </BtnBoardSelect> */}
-      {/* <BoardSelectContainer>
-         <PickerBoard selectedValue={boardSelect} onValueChange={onChangeBoard}>
-          <Picker.Item label="1번 게시판" value="1번 게시판" />
-          <Picker.Item label="2번 게시판" value="2번 게시판" />
-          <Picker.Item label="3번 게시판" value="3번 게시판" />
-        </PickerBoard> 
-      </BoardSelectContainer>*/}
       <TxtTitle
         placeholder={"글 제목"}
         onChangeText={onChangePostTitle}

@@ -3,7 +3,8 @@ import { Ionicons } from "@expo/vector-icons";
 import styled from "styled-components/native";
 import Poster from "./Poster";
 import { useNavigation } from "@react-navigation/native";
-import { TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Text, View } from "react-native";
+import { postApi } from "../utils/api";
 
 const HorizontalMovie = styled.View`
   padding: 0px 30px;
@@ -55,6 +56,7 @@ const BtnContainer = styled.View`
 `;
 
 const HMedia = ({
+  id,
   poster_path,
   original_title,
   release_date,
@@ -76,12 +78,24 @@ const HMedia = ({
     });
   };
 
-  const onPressLike = () => {
+  const onPressLike = async () => {
     //TODO : 좋아요, 좋아요 취소시 API 전송 추가 필요
     if (postLike) {
+      const tempLog = await postApi.postLike({ id, kind: "disLike" });
+
+      console.log("@@@dislike@@@");
+      console.log(JSON.stringify(tempLog));
+      console.log("@@@dislike@@@");
+
       setPostLike(false);
       setPostLikeCnt(postLikeCnt - 1);
     } else {
+      const tempLog = await postApi.postLike({ id, kind: "like" });
+
+      console.log("@@@like@@@");
+      console.log(JSON.stringify(tempLog));
+      console.log("@@@like@@@");
+
       setPostLike(true);
       setPostLikeCnt(postLikeCnt + 1);
     }
