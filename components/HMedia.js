@@ -55,6 +55,8 @@ const BtnContainer = styled.View`
   justify-content: space-between;
 `;
 
+const AllContainer = styled.View``;
+
 const HMedia = ({
   id,
   poster_path,
@@ -105,7 +107,7 @@ const HMedia = ({
   };
 
   return (
-    <>
+    <AllContainer key={id}>
       <TouchableOpacity onPress={goToDetail}>
         <HorizontalMovie>
           <Poster path={poster_path} />
@@ -140,7 +142,7 @@ const HMedia = ({
           <Text> 0</Text>
         </BtnTouchable>
       </BtnContainer>
-    </>
+    </AllContainer>
   );
 };
 

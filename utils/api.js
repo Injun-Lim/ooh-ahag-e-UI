@@ -55,19 +55,39 @@ export const postApi = {
     console.log(
       "writePost------------------------------------------------------"
     );
-    return AxiosUtil.post(`/api/post?tag=고정값테스트`, {
-      title: params.title,
-      content: params.content,
-    });
+    return AxiosUtil.post(
+      `/api/post?tag=고정값테스트`,
+      {
+        title: params.title,
+        content: params.content,
+      },
+      { withCredentials: true }
+    );
   },
 
-  getPostList: () => {
+  getPostList: ({ pageParam }) => {
     // TODO : axios버전으로 변경하기 (get)
     // return AxiosUtil.get(`/api/post/index`).then((res) => JSON.stringify(res));
     // return axios
     //   .get(`${BASE_URL}/api/post/index`)
     //   .then((res) => JSON.stringify(res));
-    return fetch(`${BASE_URL}/api/post/index`).then((res) => res.json());
+    console.log(
+      "getPostList------------------------------------------------------"
+    );
+    console.log(pageParam ? pageParam : 0);
+    console.log(
+      `${BASE_URL}/api/post/index?page=${
+        pageParam ? pageParam : 0
+      }&size=5&sort=DESC`
+    );
+    console.log(
+      "getPostList------------------------------------------------------"
+    );
+    return fetch(
+      `${BASE_URL}/api/post/index?page=${
+        pageParam ? pageParam : 0
+      }&size=5&sort=DESC`
+    ).then((res) => res.json());
   },
 
   postLike: (params) => {
@@ -79,27 +99,65 @@ export const postApi = {
       "postLike------------------------------------------------------"
     );
     if (params.kind === "like") {
-      return AxiosUtil.get(`/like/${params.id}`);
+      return AxiosUtil.post(`/like/${params.id}`);
     } else if (params.kind === "disLike") {
       return AxiosUtil.delete(`/like/${params.id}`);
     }
   },
 };
 
+export const myPageApi = {
+  getSession: (params) => {
+    console.log(
+      "getSession------------------------------------------------------"
+    );
+    console.log(params);
+    console.log(
+      "getSession------------------------------------------------------"
+    );
+    return AxiosUtil.get(`/api/v1/session`, {}, { withCredentials: true });
+  },
+
+  logout: (params) => {
+    console.log("logout------------------------------------------------------");
+    console.log(params);
+    console.log("logout------------------------------------------------------");
+    return AxiosUtil.post(
+      `/api/v1/logout`,
+      {},
+      { withCredentials: true, JSESSIONID: params.sessionId }
+    );
+  },
+};
+
 export const boardApi = {
-  comment: ({ pageParam, queryKey }) => {
+  getComments: ({ pageParam, queryKey }) => {
     const [_, id] = queryKey;
     console.log(
       "queryKey : " +
-        `${BASE_URL_MOVIE}/movie/${id}/recommendations?api_key=${API_KEY}&language=ko-KR&page=${
-          pageParam ? pageParam : 1
-        }`
+        `${BASE_URL}/api/comment/${id}?page=${pageParam ? pageParam : 0}`
     );
     return fetch(
-      `${BASE_URL_MOVIE}/movie/${id}/recommendations?api_key=${API_KEY}&language=ko-KR&page=${
-        pageParam ? pageParam : 1
-      }`
+      `${BASE_URL}/api/comment/${id}?page=${pageParam ? pageParam : 0}`
     ).then((res) => res.json());
+  },
+
+  writeComment: (params) => {
+    console.log(
+      "writeComment------------------------------------------------------"
+    );
+    console.log(params);
+    console.log(
+      "writeComment------------------------------------------------------"
+    );
+    return AxiosUtil.post(
+      `/api/comment/${params.id}/comment`,
+      {
+        memberId: params.memberId,
+        content: params.content,
+      },
+      { withCredentials: true }
+    );
   },
 };
 

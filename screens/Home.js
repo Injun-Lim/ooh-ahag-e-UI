@@ -12,6 +12,7 @@ import { moviesApi, postApi } from "./../utils/api";
 import { Ionicons } from "@expo/vector-icons";
 import Loader from "./../components/Loader";
 import HMedia from "../components/HMedia";
+import SessionCheck from "./../utils/SessionCheck";
 
 const ListTitle = styled.Text`
   color: white;
@@ -28,45 +29,52 @@ const HSeparator = styled.View`
   height: 10px;
 `;
 
+const TungText = styled.Text`
+  color: white;
+  font-size: 50px;
+  font-weight: 900;
+  text-align: center;
+`;
+
 const Home = ({ navigation: { navigate, setOptions } }) => {
   const [refreshing, setRefreshing] = useState(false);
+  const [sessionChecking, setSessionChecking] = useState(false);
   const queryClient = useQueryClient();
 
   // const [isPostLoading, setIsPostLoading] = useState(true);
   // const [postListData, setPostListData] = useState(false);
 
-  const { isLoading: isPostLoading, data: postListData } = useQuery(
-    ["postListData"],
-    postApi.getPostList
-  );
-  // const {
-  //   isLoading: upcomingLoading,
-  //   data: upcomingData,
-  //   hasNextPage,
-  //   fetchNextPage,
-  // } = useInfiniteQuery(["movies", "upcoming"], postApi.getPostList, {
-  //   // getNextPageParam을 쓰면 api에서 pageParam 인자를 받을 수 있고, 이를 api에 그대로 넘겨주면 된다. 이번의 경우 moviesApi.upcoming에 이걸 활용함.
-  //   getNextPageParam: (currentPage) => {
-  //     //인자는 2개를 받을 수 있음. (현재 페이지, 페이지 모두) Movie API는 이게 잘 구현되어 있어서 인자 1개로 한다고 함.
-  //     if (currentPage.page + 1 > currentPage.total_pages) {
-  //       return null;
-  //     }
-  //     return currentPage.page + 1;
-  //   },
-  // });
+  // const { isLoading: isPostLoading, data: postListData } = useQuery(
+  //   ["postListData"],
+  //   postApi.getPostList
+  // );
+  const {
+    isLoading: isPostLoading,
+    data: postListData,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteQuery(["postListData"], postApi.getPostList, {
+    // getNextPageParam을 쓰면 api에서 pageParam 인자를 받을 수 있고, 이를 api에 그대로 넘겨주면 된다. 이번의 경우 moviesApi.upcoming에 이걸 활용함.
+    getNextPageParam: (currentPage) => {
+      //인자는 2개를 받을 수 있음. (현재 페이지, 페이지 모두) Movie API는 이게 잘 구현되어 있어서 인자 1개로 한다고 함.
+      if (currentPage.page + 1 > currentPage.total_pages) {
+        return null;
+      }
+      return currentPage.page + 1;
+    },
+  });
   const renderHMedia = ({ item }) => (
     <HMedia
+      key={item.id}
       id={item.id}
+      poster_path={null}
       original_title={item.title}
-
-      // poster_path={item.poster_path}
-      // original_title={item.original_title}
-      // release_date={item.release_date}
-      // overview={item.overview}
-      // fullData={item}
-      // like={false}
-      // likeCnt={0}
-      // commentCnt={0}
+      release_date={item.modifiedDate}
+      overview={item.content}
+      fullData={item}
+      like={false}
+      likeCnt={item.likeCnt}
+      commentCnt={item.commentCnt}
     />
   );
 
@@ -76,7 +84,7 @@ const Home = ({ navigation: { navigate, setOptions } }) => {
     setRefreshing(false);
   };
 
-  const loading = isPostLoading;
+  const loading = isPostLoading || refreshing || sessionChecking;
 
   const loadMore = (hasNextPage) => {
     if (hasNextPage) {
@@ -111,8 +119,14 @@ const Home = ({ navigation: { navigate, setOptions } }) => {
   //   console.log("#####################################");
   // };
 
-  useEffect(() => {
+  useEffect(async () => {
     // getApiData();
+    // setSessionChecking(true);
+    // if ((await SessionCheck()) === 200) {
+    //   setSessionChecking(false);
+    // } else {
+    //   alert("세션 만료!");
+    // }
     setOptions({
       headerRight: () => <WriteBtn />,
     });
@@ -120,7 +134,7 @@ const Home = ({ navigation: { navigate, setOptions } }) => {
 
   useEffect(() => {
     console.log("postListData---------------------------------------");
-    console.log(postListData);
+    console.log(postListData ? postListData.length : "null");
     // console.log(JSON.stringify(postListData));
     console.log("postListData---------------------------------------");
   }, [postListData]);
@@ -128,35 +142,42 @@ const Home = ({ navigation: { navigate, setOptions } }) => {
   return loading ? (
     <Loader />
   ) : (
-    <>
-      {postListData.map((item) => (
-        <HMedia
-          key={item.id}
-          id={item.id}
-          poster_path={null}
-          original_title={item.title}
-          release_date={item.modifiedDate}
-          overview={"게시글내용이들어갈자리임"}
-          fullData={item}
-          like={false}
-          likeCnt={item.viewCnt}
-          commentCnt={item.commentCnt}
-        />
-      ))}
-    </>
-    // <FlatList
-    //   onEndReached={loadMore} /* 무한스크롤 - function 실행 */
-    //   // onEndReachedThreshold={0.4} /* 무한스크롤 - function 실행할 시점 설정 */
-    //   refreshing={refreshing}
-    //   onRefresh={onRefresh}
-    //   ListHeaderComponent={
-    //     <>{/* <CommingSoonTitle>Coming Soon</CommingSoonTitle> */}</>
-    //   }
-    //   data={upcomingData.pages.map((page) => page.results).flat()}
-    //   keyExtractor={movieKeyExtractor}
-    //   ItemSeparatorComponent={HSeparator}
-    //   renderItem={renderHMedia}
-    // />
+    // <>
+    //   {postListData && postListData.length ? (
+    //     postListData.map((item) => (
+    //       <>
+    //         <HMedia
+    //           key={item.id}
+    //           id={item.id}
+    //           poster_path={null}
+    //           original_title={item.title}
+    //           release_date={item.modifiedDate}
+    //           overview={item.content}
+    //           fullData={item}
+    //           like={false}
+    //           likeCnt={item.likeCnt}
+    //           commentCnt={item.commentCnt}
+    //         />
+    //         <HSeparator key={item.id + "a"} />
+    //       </>
+    //     ))
+    //   ) : (
+    //     <TungText>@@@텅@@@</TungText>
+    //   )}
+    // </>
+    <FlatList
+      onEndReached={loadMore} /* 무한스크롤 - function 실행 */
+      // onEndReachedThreshold={0.4} /* 무한스크롤 - function 실행할 시점 설정 */
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      ListHeaderComponent={
+        <>{/* <CommingSoonTitle>Coming Soon</CommingSoonTitle> */}</>
+      }
+      data={postListData.pages.map((page) => page).flat()}
+      keyExtractor={movieKeyExtractor}
+      ItemSeparatorComponent={HSeparator}
+      renderItem={renderHMedia}
+    />
   );
 };
 

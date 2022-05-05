@@ -53,7 +53,7 @@ const Tabs = () => {
           },
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Alert"
         component={Alert}
         options={{
@@ -62,7 +62,7 @@ const Tabs = () => {
             return <Ionicons name="bulb-outline" size={size} color={color} />;
           },
         }}
-      />
+      /> */}
       <Tab.Screen
         name="Search"
         component={Search}
@@ -83,7 +83,7 @@ const Tabs = () => {
           },
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Movies"
         component={Movies}
         options={{
@@ -91,7 +91,7 @@ const Tabs = () => {
             return <Ionicons name="film-outline" size={size} color={color} />;
           },
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

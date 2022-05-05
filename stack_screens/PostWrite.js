@@ -3,6 +3,7 @@ import { Text, Alert } from "react-native";
 import styled from "styled-components/native";
 import { useNavigation } from "@react-navigation/native";
 import { postApi } from "../utils/api";
+import { useQueryClient } from "react-query";
 
 const WholeContainer = styled.View`
   flex: 1;
@@ -80,6 +81,7 @@ const PostWrite = ({ navigation: { navigate } }) => {
   // const [boardIndex, setBoardIndex] = useState("");
 
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
 
   const onChangePostTitle = (event) => {
     setPostTitle(event);
@@ -106,7 +108,8 @@ const PostWrite = ({ navigation: { navigate } }) => {
           [
             {
               text: "OK",
-              onPress: () => {
+              onPress: async () => {
+                await queryClient.refetchQueries(["postListData"]);
                 navigation.navigate("Tabs", {
                   screen: "Home",
                   // params: { ...fullData, postLike, postLikeCnt, postCommentCnt },
