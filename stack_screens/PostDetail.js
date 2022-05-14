@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Dimensions, Text, View, Keyboard } from "react-native";
+import { Dimensions, Text, View, Keyboard, Alert } from "react-native";
 import { useQuery, useQueryClient, useInfiniteQuery } from "react-query";
 import styled from "styled-components/native";
 import { DARKGREY_COLOR } from "../color";
@@ -132,6 +132,9 @@ const PostDetail = ({
     // getNextPageParam을 쓰면 api에서 pageParam 인자를 받을 수 있고, 이를 api에 그대로 넘겨주면 된다. 이번의 경우 moviesApi.upcoming에 이걸 활용함.
     getNextPageParam: (currentPage) => {
       //인자는 2개를 받을 수 있음. (현재 페이지, 페이지 모두) Movie API는 이게 잘 구현되어 있어서 인자 1개로 한다고 함.
+      console.log("==pageparam====pageparam====pageparam====pageparam==");
+      console.log("currentPage : " + JSON.stringify(currentPage));
+      console.log("==pageparam====pageparam====pageparam====pageparam==");
       if (currentPage.page + 1 > currentPage.total_pages) {
         return null;
       }
@@ -231,8 +234,10 @@ const PostDetail = ({
       title={item.content}
       overview={item.content}
       fullData={item}
-      like={0}
+      like={item.likeCnt}
       liked={false}
+      createDate={item.createDate}
+      comment_id={item.id}
     />
   );
 
@@ -289,7 +294,7 @@ const PostDetail = ({
                   ) : (
                     <Ionicons name="heart-outline" size={20} color="black" />
                   )}
-                  <Text> {params.likeCnt}</Text>
+                  <Text> {postLikeCnt}</Text>
                 </BtnTouchable>
                 <BtnTouchable onPress={onPressComment}>
                   <Ionicons
@@ -297,7 +302,7 @@ const PostDetail = ({
                     size={20}
                     color="black"
                   />
-                  <Text> {params.commentCnt}</Text>
+                  <Text> {postCommentCnt}</Text>
                 </BtnTouchable>
               </BtnContainer>
               <Hr />

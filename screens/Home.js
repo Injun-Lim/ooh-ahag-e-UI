@@ -72,7 +72,7 @@ const Home = ({ navigation: { navigate, setOptions } }) => {
       release_date={item.modifiedDate}
       overview={item.content}
       fullData={item}
-      like={false}
+      like={item.likeCheck}
       likeCnt={item.likeCnt}
       commentCnt={item.commentCnt}
     />

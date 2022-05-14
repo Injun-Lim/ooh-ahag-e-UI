@@ -153,11 +153,33 @@ export const boardApi = {
     return AxiosUtil.post(
       `/api/comment/${params.id}/comment`,
       {
-        memberId: params.memberId,
         content: params.content,
       },
       { withCredentials: true }
     );
+  },
+
+  likeComments: (params) => {
+    console.log(
+      "likeComments------------------------------------------------------"
+    );
+    console.log(params);
+    console.log(
+      "likeComments------------------------------------------------------"
+    );
+    if (params.likeFlag) {
+      return AxiosUtil.post(
+        `/api/comment/${params.id}/addLike`,
+        {},
+        { withCredentials: true }
+      );
+    } else {
+      return AxiosUtil.post(
+        `/api/comment/${params.id}/deleteLike`,
+        {},
+        { withCredentials: true }
+      );
+    }
   },
 };
 
