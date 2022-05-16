@@ -16,15 +16,27 @@ const TxtNickname = styled.Text`
 const TxtContents = styled.Text`
   font-size: 18px;
 `;
-const BtnLike = styled.TouchableOpacity`
+const BtnOpacity = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   /* justify-content: center; */
   /* justify-content: space-between; */
 `;
 
+const BtnContainer = styled.View`
+  flex-direction: row;
+`;
+
+const ReplyInputBox = styled.TextInput`
+  font-size: 20px;
+  /* border-width: 1px;
+  border-color: gray; */
+  width: 85%;
+  height: 10%;
+`;
+
 const Comment = ({
-  title,
+  memberId,
   overview,
   fullData,
   like,
@@ -33,6 +45,7 @@ const Comment = ({
   comment_id,
 }) => {
   const [isLiked, setIsLiked] = useState(liked);
+  const [replyText, setReplyText] = useState("");
 
   const onLikeTouched = async () => {
     setIsLiked(!isLiked);
@@ -45,20 +58,38 @@ const Comment = ({
     console.log(JSON.stringify(tempLog));
     console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
   };
+
+  const onReplyTouched = async () => {
+    alert("답글 달기 이벤트");
+  };
+
+  const onChangeReplyText = (event) => {
+    setReplyText(event);
+  };
+
   return (
     <WholeContainer>
       <TxtNickname>
-        {title} {createDate}
+        {memberId} {`(${createDate})`}
+        {/* TODO : 조회시점부터 지난 시간 표시 */}
       </TxtNickname>
       <TxtContents>{overview}</TxtContents>
-      <BtnLike onPress={onLikeTouched}>
-        {isLiked ? (
-          <Ionicons name="heart" size={14} color="black" />
-        ) : (
-          <Ionicons name="heart-outline" size={14} color="black" />
-        )}
-        <Text>{isLiked ? like + 1 : like}</Text>
-      </BtnLike>
+      <BtnContainer>
+        <BtnOpacity onPress={onLikeTouched}>
+          {isLiked ? (
+            <Ionicons name="heart" size={14} color="black" />
+          ) : (
+            <Ionicons name="heart-outline" size={14} color="black" />
+          )}
+          <Text>
+            {isLiked ? like + 1 : like}
+            {`     `}
+          </Text>
+        </BtnOpacity>
+        <BtnOpacity onPress={onReplyTouched}>
+          <Text>답글 달기</Text>
+        </BtnOpacity>
+      </BtnContainer>
     </WholeContainer>
   );
 };

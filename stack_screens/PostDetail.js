@@ -133,17 +133,22 @@ const PostDetail = ({
     getNextPageParam: (currentPage) => {
       //인자는 2개를 받을 수 있음. (현재 페이지, 페이지 모두) Movie API는 이게 잘 구현되어 있어서 인자 1개로 한다고 함.
       console.log("==pageparam====pageparam====pageparam====pageparam==");
-      console.log("currentPage : " + JSON.stringify(currentPage));
+      console.log(
+        "currentPage.nowPage : " +
+          currentPage.nowPage +
+          " currentPage.lastPage : " +
+          currentPage.lastPage
+      );
       console.log("==pageparam====pageparam====pageparam====pageparam==");
-      if (currentPage.page + 1 > currentPage.total_pages) {
+      if (currentPage.nowPage + 1 > currentPage.lastPage) {
         return null;
       }
-      return currentPage.page + 1;
+      return currentPage.nowPage + 1;
     },
   });
   // console.log(commentData?.pages);
 
-  const isLoading = commentLoading;
+  const isLoading = commentLoading || refreshing;
   const loadMore = () => {
     if (hasNextPage) {
       fetchNextPage();
@@ -201,7 +206,7 @@ const PostDetail = ({
     console.log(JSON.stringify(tempLog));
     console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
 
-    if (tempLog.data.success === true) {
+    if (tempLog.data === 200) {
       Alert.alert("댓글 작성 완료", `내용:${commentText}`, [
         {
           text: "OK",
@@ -231,7 +236,7 @@ const PostDetail = ({
 
   const renderComments = ({ item }) => (
     <Comment
-      title={item.content}
+      memberId={item.memberId}
       overview={item.content}
       fullData={item}
       like={item.likeCnt}
@@ -248,20 +253,20 @@ const PostDetail = ({
   const voidFnc = () => {};
 
   //TODO : 화면 로딩시 권한 있는 게시판 목록 API로 가져오기, 기본값 세팅해주기(boardSelect)
-  useEffect(() => {
-    setOptions({
-      title: "title" in params ? params.title : "@게시판명@",
-      headerRight: () => <ShareButton />,
-    });
-  }, [params]);
+  // useEffect(() => {
+  //   setOptions({
+  //     title: "title" in params ? params.title : "@게시판명@",
+  //     headerRight: () => <ShareButton />,
+  //   });
+  // }, [params]);
 
-  useEffect(() => {
-    if (commentData) {
-      console.log("commentData.pages.flat()");
-      console.log(commentData.pages.flat());
-      console.log("commentData.pages.flat()");
-    }
-  }, [commentData]);
+  // useEffect(() => {
+  //   if (commentData) {
+  //     console.log("commentData.pages.flat()");
+  //     console.log(commentData.pages.flat());
+  //     console.log("commentData.pages.flat()");
+  //   }
+  // }, [commentData]);
 
   return isLoading ? (
     <Loader />
@@ -308,7 +313,7 @@ const PostDetail = ({
               <Hr />
             </>
           }
-          data={commentData.pages.map((page) => page).flat()}
+          data={commentData.pages.map((page) => page.result).flat()}
           renderItem={renderComments}
           keyExtractor={commentKeyExtractor}
           ItemSeparatorComponent={HSeparator}

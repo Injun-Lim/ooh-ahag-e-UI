@@ -117,7 +117,7 @@ const HMedia = ({
               {new Date(release_date).toLocaleDateString("ko")}
             </ReleaseDate>
             <Overview>
-              {overview !== "" && overview.length > 140
+              {overview && overview.length > 140
                 ? `${overview.slice(0, 140)}...`
                 : overview}
             </Overview>

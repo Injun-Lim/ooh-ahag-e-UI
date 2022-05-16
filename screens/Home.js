@@ -57,10 +57,16 @@ const Home = ({ navigation: { navigate, setOptions } }) => {
     // getNextPageParam을 쓰면 api에서 pageParam 인자를 받을 수 있고, 이를 api에 그대로 넘겨주면 된다. 이번의 경우 moviesApi.upcoming에 이걸 활용함.
     getNextPageParam: (currentPage) => {
       //인자는 2개를 받을 수 있음. (현재 페이지, 페이지 모두) Movie API는 이게 잘 구현되어 있어서 인자 1개로 한다고 함.
-      if (currentPage.page + 1 > currentPage.total_pages) {
+      console.log(
+        "currentPage.currentPage : " +
+          currentPage.currentPage +
+          " currentPage.totalPages : " +
+          currentPage.totalPages
+      );
+      if (currentPage.currentPage + 1 > currentPage.totalPages) {
         return null;
       }
-      return currentPage.page + 1;
+      return currentPage.currentPage + 1;
     },
   });
   const renderHMedia = ({ item }) => (
@@ -86,7 +92,7 @@ const Home = ({ navigation: { navigate, setOptions } }) => {
 
   const loading = isPostLoading || refreshing || sessionChecking;
 
-  const loadMore = (hasNextPage) => {
+  const loadMore = () => {
     if (hasNextPage) {
       fetchNextPage();
     }
@@ -132,39 +138,39 @@ const Home = ({ navigation: { navigate, setOptions } }) => {
     });
   }, []);
 
-  useEffect(() => {
-    console.log("postListData---------------------------------------");
-    console.log(postListData ? postListData.length : "null");
-    // console.log(JSON.stringify(postListData));
-    console.log("postListData---------------------------------------");
-  }, [postListData]);
+  // useEffect(() => {
+  //   console.log("postListData---------------------------------------");
+  //   console.log(postListData ? postListData : "null");
+  //   // console.log(JSON.stringify(postListData));
+  //   console.log("postListData---------------------------------------");
+  // }, [postListData]);
 
   return loading ? (
     <Loader />
-  ) : (
-    // <>
-    //   {postListData && postListData.length ? (
-    //     postListData.map((item) => (
-    //       <>
-    //         <HMedia
-    //           key={item.id}
-    //           id={item.id}
-    //           poster_path={null}
-    //           original_title={item.title}
-    //           release_date={item.modifiedDate}
-    //           overview={item.content}
-    //           fullData={item}
-    //           like={false}
-    //           likeCnt={item.likeCnt}
-    //           commentCnt={item.commentCnt}
-    //         />
-    //         <HSeparator key={item.id + "a"} />
-    //       </>
-    //     ))
-    //   ) : (
-    //     <TungText>@@@텅@@@</TungText>
-    //   )}
-    // </>
+  ) : // <>
+  //   {postListData && postListData.length ? (
+  //     postListData.map((item) => (
+  //       <>
+  //         <HMedia
+  //           key={item.id}
+  //           id={item.id}
+  //           poster_path={null}
+  //           original_title={item.title}
+  //           release_date={item.modifiedDate}
+  //           overview={item.content}
+  //           fullData={item}
+  //           like={false}
+  //           likeCnt={item.likeCnt}
+  //           commentCnt={item.commentCnt}
+  //         />
+  //         <HSeparator key={item.id + "a"} />
+  //       </>
+  //     ))
+  //   ) : (
+  //     <TungText>@@@텅@@@</TungText>
+  //   )}
+  // </>
+  postListData ? (
     <FlatList
       onEndReached={loadMore} /* 무한스크롤 - function 실행 */
       // onEndReachedThreshold={0.4} /* 무한스크롤 - function 실행할 시점 설정 */
@@ -173,11 +179,13 @@ const Home = ({ navigation: { navigate, setOptions } }) => {
       ListHeaderComponent={
         <>{/* <CommingSoonTitle>Coming Soon</CommingSoonTitle> */}</>
       }
-      data={postListData.pages.map((page) => page).flat()}
+      data={postListData.pages.map((page) => page.elements).flat()}
       keyExtractor={movieKeyExtractor}
       ItemSeparatorComponent={HSeparator}
       renderItem={renderHMedia}
     />
+  ) : (
+    <Text>텅</Text>
   );
 };
 

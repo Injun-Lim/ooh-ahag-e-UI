@@ -65,7 +65,7 @@ export const postApi = {
     );
   },
 
-  getPostList: ({ pageParam }) => {
+  getPostList: async ({ pageParam }) => {
     // TODO : axios버전으로 변경하기 (get)
     // return AxiosUtil.get(`/api/post/index`).then((res) => JSON.stringify(res));
     // return axios
@@ -76,18 +76,21 @@ export const postApi = {
     );
     console.log(pageParam ? pageParam : 0);
     console.log(
-      `${BASE_URL}/api/post/index?page=${
-        pageParam ? pageParam : 0
-      }&size=5&sort=DESC`
+      `${BASE_URL}/api/post/index?page=${pageParam ? pageParam : 0}&size=2`
     );
     console.log(
       "getPostList------------------------------------------------------"
     );
-    return fetch(
-      `${BASE_URL}/api/post/index?page=${
-        pageParam ? pageParam : 0
-      }&size=5&sort=DESC`
-    ).then((res) => res.json());
+
+    const res = await fetch(
+      `${BASE_URL}/api/post/index?page=${pageParam ? pageParam : 0}&size=2`
+    ).then((response) => response.json());
+    console.log(res);
+    return res;
+
+    // return fetch(
+    //   `${BASE_URL}/api/post/index?page=${pageParam ? pageParam : 0}&size=2`
+    // ).then((res) => res.json());
   },
 
   postLike: (params) => {
@@ -131,15 +134,22 @@ export const myPageApi = {
 };
 
 export const boardApi = {
-  getComments: ({ pageParam, queryKey }) => {
+  getComments: async ({ pageParam, queryKey }) => {
     const [_, id] = queryKey;
     console.log(
       "queryKey : " +
         `${BASE_URL}/api/comment/${id}?page=${pageParam ? pageParam : 0}`
     );
-    return fetch(
+
+    const res = await fetch(
       `${BASE_URL}/api/comment/${id}?page=${pageParam ? pageParam : 0}`
-    ).then((res) => res.json());
+    ).then((response) => response.json());
+    console.log(res);
+    return res;
+
+    // return fetch(
+    //   `${BASE_URL}/api/comment/${id}?page=${pageParam ? pageParam : 0}`
+    // ).then((res) => res.json());
   },
 
   writeComment: (params) => {
@@ -169,13 +179,13 @@ export const boardApi = {
     );
     if (params.likeFlag) {
       return AxiosUtil.post(
-        `/api/comment/${params.id}/addLike`,
+        `/api/comment/${params.id}/deleteLike`,
         {},
         { withCredentials: true }
       );
     } else {
       return AxiosUtil.post(
-        `/api/comment/${params.id}/deleteLike`,
+        `/api/comment/${params.id}/addLike`,
         {},
         { withCredentials: true }
       );
