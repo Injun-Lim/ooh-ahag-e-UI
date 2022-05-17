@@ -76,14 +76,14 @@ export const postApi = {
     );
     console.log(pageParam ? pageParam : 0);
     console.log(
-      `${BASE_URL}/api/post/index?page=${pageParam ? pageParam : 0}&size=2`
+      `${BASE_URL}/api/post/index?page=${pageParam ? pageParam : 0}&size=5`
     );
     console.log(
       "getPostList------------------------------------------------------"
     );
 
     const res = await fetch(
-      `${BASE_URL}/api/post/index?page=${pageParam ? pageParam : 0}&size=2`
+      `${BASE_URL}/api/post/index?page=${pageParam ? pageParam : 0}&size=5`
     ).then((response) => response.json());
     console.log(res);
     return res;
@@ -106,6 +106,17 @@ export const postApi = {
     } else if (params.kind === "disLike") {
       return AxiosUtil.delete(`/like/${params.id}`);
     }
+  },
+
+  postDelete: (params) => {
+    console.log(
+      "postDelete------------------------------------------------------"
+    );
+    console.log(params);
+    console.log(
+      "postDelete------------------------------------------------------"
+    );
+    return AxiosUtil.delete(`/api/post/${params.id}`);
   },
 };
 
@@ -190,6 +201,21 @@ export const boardApi = {
         { withCredentials: true }
       );
     }
+  },
+
+  deleteComments: (params) => {
+    console.log(
+      "deleteComments------------------------------------------------------"
+    );
+    console.log(params);
+    console.log(
+      "deleteComments------------------------------------------------------"
+    );
+    return AxiosUtil.put(
+      `/api/comment/${params.id}/comment`,
+      {},
+      { withCredentials: true }
+    );
   },
 };
 

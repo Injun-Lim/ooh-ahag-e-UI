@@ -34,8 +34,6 @@ const Overview = styled.Text`
 const OriginalTitle = styled.Text`
   color: white;
   font-weight: 600;
-  margin-top: 7px;
-  margin-bottom: 5px;
 `;
 
 const BtnTouchable = styled.TouchableOpacity`
@@ -56,6 +54,17 @@ const BtnContainer = styled.View`
 `;
 
 const AllContainer = styled.View``;
+
+const TopContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  margin-right: 25px;
+  margin-top: 7px;
+  margin-bottom: 5px;
+`;
+const BtnDeleteComment = styled.TouchableOpacity`
+  align-items: center;
+`;
 
 const HMedia = ({
   id,
@@ -105,6 +114,16 @@ const HMedia = ({
   const onPressComment = () => {
     goToDetail();
   };
+  const onPressDelete = async () => {
+    //TODO : API 문서 수정되면 API 수정해야함
+    const tempLog = await postApi.postDelete({
+      id: id,
+    });
+
+    console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+    console.log(JSON.stringify(tempLog));
+    console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+  };
 
   return (
     <AllContainer key={id}>
@@ -112,7 +131,12 @@ const HMedia = ({
         <HorizontalMovie>
           <Poster path={poster_path} />
           <HColumn>
-            <OriginalTitle>{original_title}</OriginalTitle>
+            <TopContainer>
+              <OriginalTitle>{original_title}</OriginalTitle>
+              <BtnDeleteComment onPress={onPressDelete}>
+                <Ionicons name="close-outline" size={18} color="black" />
+              </BtnDeleteComment>
+            </TopContainer>
             <ReleaseDate>
               {new Date(release_date).toLocaleDateString("ko")}
             </ReleaseDate>
@@ -139,7 +163,7 @@ const HMedia = ({
             size={20}
             color="black"
           />
-          <Text> 0</Text>
+          <Text> {commentCnt}</Text>
         </BtnTouchable>
       </BtnContainer>
     </AllContainer>

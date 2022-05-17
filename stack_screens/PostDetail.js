@@ -234,17 +234,25 @@ const PostDetail = ({
     alert("공유하기 버튼 이벤트");
   };
 
-  const renderComments = ({ item }) => (
-    <Comment
-      memberId={item.memberId}
-      overview={item.content}
-      fullData={item}
-      like={item.likeCnt}
-      liked={false}
-      createDate={item.createDate}
-      comment_id={item.id}
-    />
-  );
+  const renderComments = ({ item }) => {
+    if (item.parentId === 0) {
+      return (
+        <Comment
+          memberId={item.memberId}
+          overview={item.content}
+          fullData={item}
+          like={item.likeCnt}
+          liked={false}
+          createDate={item.createDate}
+          comment_id={item.id}
+          parentId={item.parentId}
+          userName={item.userName}
+        />
+      );
+    } else {
+      <></>;
+    }
+  };
 
   const commentKeyExtractor = (item) => {
     return item.id;
@@ -329,7 +337,7 @@ const PostDetail = ({
           // onEndEditing={checkEmailValid}
           autoCapitalize={"none"}
         ></BottomInputBox>
-        <BottomBtn onPress={onPressWriteComment}>
+        <BottomBtn onPress={onPressWriteComment} disabled={!commentText}>
           <BottomBtnText>게시</BottomBtnText>
         </BottomBtn>
       </BottomView>

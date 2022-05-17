@@ -10,6 +10,13 @@ const WholeContainer = styled.View`
   padding-left: 5%;
   padding-right: 5%;
 `;
+const TopContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+`;
+const BtnDeleteComment = styled.TouchableOpacity`
+  align-items: center;
+`;
 const TxtNickname = styled.Text`
   font-size: 14px;
 `;
@@ -43,6 +50,8 @@ const Comment = ({
   liked,
   createDate,
   comment_id,
+  parentId,
+  userName,
 }) => {
   const [isLiked, setIsLiked] = useState(liked);
   const [replyText, setReplyText] = useState("");
@@ -59,7 +68,18 @@ const Comment = ({
     console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
   };
 
-  const onReplyTouched = async () => {
+  const onPressDelete = async () => {
+    //TODO : API 문서 수정되면 API 수정해야함
+    const tempLog = await boardApi.deleteComments({
+      id: comment_id,
+    });
+
+    console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+    console.log(JSON.stringify(tempLog));
+    console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+  };
+
+  const onReplyTouched = () => {
     alert("답글 달기 이벤트");
   };
 
@@ -69,10 +89,15 @@ const Comment = ({
 
   return (
     <WholeContainer>
-      <TxtNickname>
-        {memberId} {`(${createDate})`}
-        {/* TODO : 조회시점부터 지난 시간 표시 */}
-      </TxtNickname>
+      <TopContainer>
+        <TxtNickname>
+          {userName} {`(${createDate})`}
+          {/* TODO : 조회시점부터 지난 시간 표시 */}
+        </TxtNickname>
+        <BtnDeleteComment onPress={onPressDelete}>
+          <Ionicons name="close-outline" size={14} color="black" />
+        </BtnDeleteComment>
+      </TopContainer>
       <TxtContents>{overview}</TxtContents>
       <BtnContainer>
         <BtnOpacity onPress={onLikeTouched}>
@@ -90,6 +115,32 @@ const Comment = ({
           <Text>답글 달기</Text>
         </BtnOpacity>
       </BtnContainer>
+      {/* 대댓글 부분 */}
+      {parentId !== 0 ? (
+        <>
+          <TxtNickname>
+            {userName} {`(${createDate})`}
+            {/* TODO : 조회시점부터 지난 시간 표시 */}
+          </TxtNickname>
+          <TxtContents>{overview}</TxtContents>
+          <BtnContainer>
+            <BtnOpacity onPress={onLikeTouched}>
+              {isLiked ? (
+                <Ionicons name="heart" size={14} color="black" />
+              ) : (
+                <Ionicons name="heart-outline" size={14} color="black" />
+              )}
+              <Text>
+                {isLiked ? like + 1 : like}
+                {`     `}
+              </Text>
+            </BtnOpacity>
+            <BtnOpacity onPress={onReplyTouched}>
+              <Text>답글 달기</Text>
+            </BtnOpacity>
+          </BtnContainer>
+        </>
+      ) : null}
     </WholeContainer>
   );
 };
