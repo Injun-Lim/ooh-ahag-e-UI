@@ -42,6 +42,10 @@ const ReplyInputBox = styled.TextInput`
   height: 10%;
 `;
 
+const TxtDeletedComment = styled.Text`
+  font-size: 24px;
+`;
+
 const Comment = ({
   memberId,
   overview,
@@ -49,9 +53,12 @@ const Comment = ({
   like,
   liked,
   createDate,
-  comment_id,
+  commentId,
   parentId,
   userName,
+  postId,
+  deleteYN,
+  onClickDeleteComment,
 }) => {
   const [isLiked, setIsLiked] = useState(liked);
   const [replyText, setReplyText] = useState("");
@@ -59,7 +66,7 @@ const Comment = ({
   const onLikeTouched = async () => {
     setIsLiked(!isLiked);
     const tempLog = await boardApi.likeComments({
-      id: comment_id,
+      id: commentId,
       likeFlag: isLiked,
     });
 
@@ -69,14 +76,8 @@ const Comment = ({
   };
 
   const onPressDelete = async () => {
-    //TODO : API 문서 수정되면 API 수정해야함
-    const tempLog = await boardApi.deleteComments({
-      id: comment_id,
-    });
-
-    console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
-    console.log(JSON.stringify(tempLog));
-    console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+    // PostDetail.js로 callback하여 API 전송
+    onClickDeleteComment(commentId, postId);
   };
 
   const onReplyTouched = () => {
@@ -89,39 +90,19 @@ const Comment = ({
 
   return (
     <WholeContainer>
-      <TopContainer>
-        <TxtNickname>
-          {userName} {`(${createDate})`}
-          {/* TODO : 조회시점부터 지난 시간 표시 */}
-        </TxtNickname>
-        <BtnDeleteComment onPress={onPressDelete}>
-          <Ionicons name="close-outline" size={14} color="black" />
-        </BtnDeleteComment>
-      </TopContainer>
-      <TxtContents>{overview}</TxtContents>
-      <BtnContainer>
-        <BtnOpacity onPress={onLikeTouched}>
-          {isLiked ? (
-            <Ionicons name="heart" size={14} color="black" />
-          ) : (
-            <Ionicons name="heart-outline" size={14} color="black" />
-          )}
-          <Text>
-            {isLiked ? like + 1 : like}
-            {`     `}
-          </Text>
-        </BtnOpacity>
-        <BtnOpacity onPress={onReplyTouched}>
-          <Text>답글 달기</Text>
-        </BtnOpacity>
-      </BtnContainer>
-      {/* 대댓글 부분 */}
-      {parentId !== 0 ? (
+      {deleteYN === "Y" ? (
+        <TxtDeletedComment>삭제된 댓글입니다.</TxtDeletedComment>
+      ) : (
         <>
-          <TxtNickname>
-            {userName} {`(${createDate})`}
-            {/* TODO : 조회시점부터 지난 시간 표시 */}
-          </TxtNickname>
+          <TopContainer>
+            <TxtNickname>
+              {userName} {`(${createDate})`}
+              {/* TODO : 조회시점부터 지난 시간 표시 */}
+            </TxtNickname>
+            <BtnDeleteComment onPress={onPressDelete}>
+              <Ionicons name="close-outline" size={14} color="black" />
+            </BtnDeleteComment>
+          </TopContainer>
           <TxtContents>{overview}</TxtContents>
           <BtnContainer>
             <BtnOpacity onPress={onLikeTouched}>
@@ -139,8 +120,34 @@ const Comment = ({
               <Text>답글 달기</Text>
             </BtnOpacity>
           </BtnContainer>
+          {/* 대댓글 부분 */}
+          {parentId !== 0 ? (
+            <>
+              <TxtNickname>
+                {userName} {`(${createDate})`}
+                {/* TODO : 조회시점부터 지난 시간 표시 */}
+              </TxtNickname>
+              <TxtContents>{overview}</TxtContents>
+              <BtnContainer>
+                <BtnOpacity onPress={onLikeTouched}>
+                  {isLiked ? (
+                    <Ionicons name="heart" size={14} color="black" />
+                  ) : (
+                    <Ionicons name="heart-outline" size={14} color="black" />
+                  )}
+                  <Text>
+                    {isLiked ? like + 1 : like}
+                    {`     `}
+                  </Text>
+                </BtnOpacity>
+                <BtnOpacity onPress={onReplyTouched}>
+                  <Text>답글 달기</Text>
+                </BtnOpacity>
+              </BtnContainer>
+            </>
+          ) : null}
         </>
-      ) : null}
+      )}
     </WholeContainer>
   );
 };

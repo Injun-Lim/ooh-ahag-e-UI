@@ -189,7 +189,7 @@ export const boardApi = {
       "likeComments------------------------------------------------------"
     );
     if (params.likeFlag) {
-      return AxiosUtil.post(
+      return AxiosUtil.delete(
         `/api/comment/${params.id}/deleteLike`,
         {},
         { withCredentials: true }
@@ -212,8 +212,8 @@ export const boardApi = {
       "deleteComments------------------------------------------------------"
     );
     return AxiosUtil.put(
-      `/api/comment/${params.id}/comment`,
-      {},
+      `/api/comment/${params.postId}/comment`,
+      { commentId: params.commentId },
       { withCredentials: true }
     );
   },

@@ -210,11 +210,10 @@ const PostDetail = ({
       Alert.alert("댓글 작성 완료", `내용:${commentText}`, [
         {
           text: "OK",
-          onPress: async () => {
-            await queryClient.refetchQueries(["comments"]);
-          },
         },
       ]);
+      // onRefresh(); 이걸로 하면 화면 refresh돼서 조금 부자연스러워보임
+      await queryClient.refetchQueries(["comments"]);
     } else {
       Alert.alert("댓글 작성 에러", `내용:${commentText}`);
     }
@@ -234,6 +233,26 @@ const PostDetail = ({
     alert("공유하기 버튼 이벤트");
   };
 
+  const onClickDeleteComment = (delCommentId, delPostId) => {
+    Alert.alert("댓글 삭제하기", "댓글을 삭제하시겠습니까?", [
+      {
+        text: "OK",
+        onPress: async () => {
+          const tempLog = await boardApi.deleteComments({
+            commentId: delCommentId,
+            postId: delPostId,
+          });
+
+          console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+          console.log(JSON.stringify(tempLog));
+          console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
+          await queryClient.refetchQueries(["comments"]);
+        },
+      },
+      { text: "NO" },
+    ]);
+  };
+
   const renderComments = ({ item }) => {
     if (item.parentId === 0) {
       return (
@@ -244,9 +263,12 @@ const PostDetail = ({
           like={item.likeCnt}
           liked={false}
           createDate={item.createDate}
-          comment_id={item.id}
+          commentId={item.id}
           parentId={item.parentId}
           userName={item.userName}
+          postId={params.id}
+          deleteYN={item.deleteYN}
+          onClickDeleteComment={onClickDeleteComment}
         />
       );
     } else {
