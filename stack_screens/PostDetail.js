@@ -81,17 +81,37 @@ const HSeparator = styled.View`
   margin-top: 5px;
 `;
 
+const BottomReplyBox = styled.View`
+  width: 100%;
+  height: 10%;
+  bottom: 10%;
+  border-width: 1px;
+  border-color: grey;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  position: absolute;
+  background-color: grey;
+  padding-left: 3%;
+`;
+
+const BottomReplyBoxText = styled.Text`
+  font-size: 18px;
+  color: white;
+`;
+
 const BottomView = styled.View`
   width: 100%;
   height: 10%;
   /* background-color: #ee5407; */
   border-width: 1px;
-  border-color: gray;
+  border-color: grey;
   justify-content: center;
   align-items: center;
   flex-direction: row;
   position: absolute;
   bottom: 0;
+  padding-left: 3%;
 `;
 
 const BottomInputBox = styled.TextInput`
@@ -120,6 +140,9 @@ const PostDetail = ({
   const [postLikeCnt, setPostLikeCnt] = useState(params.postLikeCnt);
   const [postCommentCnt, setPostCommentCnt] = useState(params.postCommentCnt);
   const [commentText, setCommentText] = useState("");
+  const [selectedCommentId, setSelectedCommentId] = useState(-1);
+
+  const [replyBoxText, setReplyBoxText] = useState("님에게 댓글 남기는 중");
 
   const queryClient = useQueryClient();
 
@@ -199,8 +222,10 @@ const PostDetail = ({
       id: params.id,
       memberId: 2,
       content: commentText,
+      parentId: selectedCommentId,
     });
     setCommentText("");
+    setSelectedCommentId(-1);
 
     console.log("(@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@)");
     console.log(JSON.stringify(tempLog));
@@ -253,31 +278,39 @@ const PostDetail = ({
     ]);
   };
 
+  const onClickReplyComment = (commentId, userName) => {
+    // selectedCommentId
+    setSelectedCommentId(commentId);
+    setReplyBoxText(`${userName}님에게 답글 남기는 중`);
+  };
+
   const renderComments = ({ item }) => {
-    if (item.parentId === 0) {
-      return (
-        <Comment
-          memberId={item.memberId}
-          overview={item.content}
-          fullData={item}
-          like={item.likeCnt}
-          liked={false}
-          createDate={item.createDate}
-          commentId={item.id}
-          parentId={item.parentId}
-          userName={item.userName}
-          postId={params.id}
-          deleteYN={item.deleteYN}
-          onClickDeleteComment={onClickDeleteComment}
-        />
-      );
-    } else {
-      <></>;
-    }
+    return (
+      <Comment
+        memberId={item.memberId}
+        overview={item.content}
+        fullData={item}
+        like={item.likeCnt}
+        liked={item.likeCheck}
+        createDate={item.createDate}
+        commentId={item.id}
+        parentId={item.parentId}
+        userName={item.userName}
+        postId={params.id}
+        deleteYN={item.deleteYN}
+        childComment={item.childComment}
+        onClickDeleteComment={onClickDeleteComment}
+        onClickReplyComment={onClickReplyComment}
+      />
+    );
   };
 
   const commentKeyExtractor = (item) => {
     return item.id;
+  };
+
+  const onPressReplyX = () => {
+    setSelectedCommentId(-1);
   };
 
   const voidFnc = () => {};
@@ -349,9 +382,17 @@ const PostDetail = ({
           ItemSeparatorComponent={HSeparator}
         />
       </FlatListView>
+      {selectedCommentId === -1 ? null : (
+        <BottomReplyBox>
+          <BottomReplyBoxText>{replyBoxText}</BottomReplyBoxText>
+          <BottomBtn onPress={onPressReplyX}>
+            <Ionicons name="close-outline" size={20} color="black" />
+          </BottomBtn>
+        </BottomReplyBox>
+      )}
       <BottomView>
         <BottomInputBox
-          placeholder={"댓글을 남겨주세요."}
+          placeholder={"댓글을 입력해주세요."}
           onChangeText={onChangeCommentText}
           value={commentText}
           // keyboardType={"email-address"}

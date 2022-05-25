@@ -5,6 +5,7 @@ import Poster from "./Poster";
 import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity, Text, View } from "react-native";
 import { postApi } from "../utils/api";
+import moment from "moment";
 
 const HorizontalMovie = styled.View`
   padding: 0px 30px;
@@ -138,7 +139,8 @@ const HMedia = ({
               </BtnDeleteComment>
             </TopContainer>
             <ReleaseDate>
-              {new Date(release_date).toLocaleDateString("ko")}
+              {/* {new Date(release_date).toLocaleDateString("ko")} */}
+              {moment(release_date).fromNow()}
             </ReleaseDate>
             <Overview>
               {overview && overview.length > 140

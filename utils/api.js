@@ -171,8 +171,14 @@ export const boardApi = {
     console.log(
       "writeComment------------------------------------------------------"
     );
+    let apiUrl;
+    if (params.parentId === -1 || params.parentId === null) {
+      apiUrl = `/api/comment/${params.id}/comment`;
+    } else {
+      apiUrl = `/api/comment/${params.id}/comment/${params.parentId}`;
+    }
     return AxiosUtil.post(
-      `/api/comment/${params.id}/comment`,
+      apiUrl,
       {
         content: params.content,
       },

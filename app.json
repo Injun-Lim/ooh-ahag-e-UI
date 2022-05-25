@@ -7,7 +7,13 @@
       "**/*"
     ],
     "description": "",
-    "githubUrl": "https://github.com/Injun-Lim/ooh-ahag-e-UI"
+    "githubUrl": "https://github.com/Injun-Lim/ooh-ahag-e-UI",
+    "android": {
+      "package": "com.jz6865.oohahageui"
+    },
+    "ios": {
+      "bundleIdentifier": "com.jz6865.oohahageui"
+    }
   },
   "name": "ooh-ahag-e-UI"
 }
